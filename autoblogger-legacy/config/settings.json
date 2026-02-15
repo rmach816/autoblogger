@@ -1,0 +1,25 @@
+{
+  "ai_provider": "real",
+  "publisher": "file",
+  "environment": "development",
+  "log_level": "INFO",
+  "max_posts_per_day": 7,
+  "request_timeout": 30,
+  "blogs": [
+    {
+      "id": "executive_tech_blog",
+      "niche": "smart home technology and automation",
+      "target_audience": "homeowners and business owners in Houston",
+      "tone": "professional and trustworthy",
+      "posts_per_week": 3,
+      "keywords": ["smart home", "home automation", "networking", "home theater", "security systems", "Houston technology", "commercial AV", "lighting control"],
+      "word_count": 1500,
+      "publish_to": "file",
+      "business_name": "Executive Technology Group",
+      "business_phone": "(281) 826-1880",
+      "business_website": "https://www.executivetechnologygroup.com/",
+      "service_areas": "Houston & surrounding areas",
+      "specialties": ["Smart Home Automation", "Home Theater & AV Systems", "Networking Solutions", "Security & Surveillance", "Lighting Control"]
+    }
+  ]
+}

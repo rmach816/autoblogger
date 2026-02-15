@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoBlogger Test UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">AutoBlogger Test UI</h1>
+            <p class="text-xl text-gray-600">AI-Powered Blog Content Generation</p>
+        </header>
+
+        <!-- Health Check -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">System Status</h2>
+            <button id="healthCheck" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                Check Backend Health
+            </button>
+            <div id="healthResult" class="mt-4 p-4 bg-gray-100 rounded-md hidden">
+                <pre id="healthContent"></pre>
+            </div>
+        </div>
+
+        <!-- Article Generation -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Generate Article</h2>
+            <form id="articleForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Topic</label>
+                    <input type="text" id="topic" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter article topic..." required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Keywords (comma-separated)</label>
+                    <input type="text" id="keywords" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="keyword1, keyword2, keyword3">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Word Count</label>
+                        <input type="number" id="wordCount" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value="1200" min="300" max="2000">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Article Type</label>
+                        <select id="articleType" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="custom">Custom</option>
+                            <option value="quick">Quick Action</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Generate Article
+                </button>
+            </form>
+            <div id="articleResult" class="mt-4 p-4 bg-gray-100 rounded-md hidden">
+                <h3 class="font-semibold mb-2">Generated Article:</h3>
+                <pre id="articleContent" class="whitespace-pre-wrap"></pre>
+            </div>
+        </div>
+
+        <!-- Image Generation -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Generate Image</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Image Prompt</label>
+                    <input type="text" id="imagePrompt" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Describe the image you want...">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Style</label>
+                    <select id="imageStyle" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="professional">Professional</option>
+                        <option value="business">Business</option>
+                        <option value="technology">Technology</option>
+                        <option value="security">Security</option>
+                        <option value="networking">Networking</option>
+                    </select>
+                </div>
+                
+                <button id="generateImage" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                    Generate Image
+                </button>
+            </div>
+            <div id="imageResult" class="mt-4 p-4 bg-gray-100 rounded-md hidden">
+                <h3 class="font-semibold mb-2">Generated Image:</h3>
+                <div id="imageContent"></div>
+            </div>
+        </div>
+
+        <!-- Articles List -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-semibold">Generated Articles</h2>
+                <button id="loadArticles" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700">
+                    Load Articles
+                </button>
+            </div>
+            <div id="articlesList" class="space-y-4">
+                <p class="text-gray-500">Click "Load Articles" to see generated articles</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5001/api';
+        
+        // Health Check
+        document.getElementById('healthCheck').addEventListener('click', async () => {
+            try {
+                const response = await fetch('http://localhost:5001/health');
+                const data = await response.json();
+                document.getElementById('healthContent').textContent = JSON.stringify(data, null, 2);
+                document.getElementById('healthResult').classList.remove('hidden');
+            } catch (error) {
+                document.getElementById('healthContent').textContent = 'Error: ' + error.message;
+                document.getElementById('healthResult').classList.remove('hidden');
+            }
+        });
+
+        // Article Generation
+        document.getElementById('articleForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                topic: document.getElementById('topic').value,
+                keywords: document.getElementById('keywords').value.split(',').map(k => k.trim()),
+                wordCount: parseInt(document.getElementById('wordCount').value),
+                articleType: document.getElementById('articleType').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/generate-article`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                document.getElementById('articleContent').textContent = JSON.stringify(data, null, 2);
+                document.getElementById('articleResult').classList.remove('hidden');
+            } catch (error) {
+                document.getElementById('articleContent').textContent = 'Error: ' + error.message;
+                document.getElementById('articleResult').classList.remove('hidden');
+            }
+        });
+
+        // Image Generation
+        document.getElementById('generateImage').addEventListener('click', async () => {
+            const formData = {
+                prompt: document.getElementById('imagePrompt').value,
+                style: document.getElementById('imageStyle').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/generate-image`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                document.getElementById('imageContent').innerHTML = `
+                    <p><strong>Image URL:</strong> <a href="${data.imageUrl}" target="_blank" class="text-blue-600 hover:underline">${data.imageUrl}</a></p>
+                    <img src="${data.imageUrl}" alt="Generated Image" class="mt-2 max-w-md rounded-lg shadow-md">
+                `;
+                document.getElementById('imageResult').classList.remove('hidden');
+            } catch (error) {
+                document.getElementById('imageContent').textContent = 'Error: ' + error.message;
+                document.getElementById('imageResult').classList.remove('hidden');
+            }
+        });
+
+        // Load Articles
+        document.getElementById('loadArticles').addEventListener('click', async () => {
+            try {
+                const response = await fetch(`${API_BASE}/articles`);
+                const articles = await response.json();
+                
+                const articlesList = document.getElementById('articlesList');
+                if (articles.length === 0) {
+                    articlesList.innerHTML = '<p class="text-gray-500">No articles found. Generate some articles first!</p>';
+                } else {
+                    articlesList.innerHTML = articles.map(article => `
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <h3 class="font-semibold text-lg mb-2">${article.title}</h3>
+                            <div class="text-sm text-gray-600 mb-2">
+                                <span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs mr-2">${article.articleType}</span>
+                                <span class="text-gray-500">${article.wordCount} words</span>
+                            </div>
+                            <p class="text-gray-700 text-sm mb-2">${article.content.substring(0, 200)}...</p>
+                            <div class="text-xs text-gray-500">
+                                Created: ${new Date(article.createdAt).toLocaleDateString()}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                document.getElementById('articlesList').innerHTML = '<p class="text-red-500">Error loading articles: ' + error.message + '</p>';
+            }
+        });
+    </script>
+</body>
+</html>
+

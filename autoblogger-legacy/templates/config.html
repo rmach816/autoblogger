@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - AutoBlogger{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-cog me-2"></i>Settings</h1>
+            <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-robot me-2"></i>AI Configuration</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">AI Provider</label>
+                    <input type="text" class="form-control" value="{{ config.ai_provider|title }}" readonly>
+                    <div class="form-text">Current AI provider for content generation</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Publisher</label>
+                    <input type="text" class="form-control" value="{{ config.publisher|title }}" readonly>
+                    <div class="form-text">Where articles are published</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Environment</label>
+                    <input type="text" class="form-control" value="{{ config.environment|title }}" readonly>
+                    <div class="form-text">Current environment mode</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Limits & Performance</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Max Posts Per Day</label>
+                    <input type="number" class="form-control" value="{{ config.max_posts_per_day }}" readonly>
+                    <div class="form-text">Maximum articles generated per day</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Request Timeout</label>
+                    <input type="number" class="form-control" value="{{ config.request_timeout }}" readonly>
+                    <div class="form-text">API request timeout in seconds</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Log Level</label>
+                    <input type="text" class="form-control" value="{{ config.log_level }}" readonly>
+                    <div class="form-text">Current logging verbosity</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-blog me-2"></i>Configured Blogs</h5>
+            </div>
+            <div class="card-body">
+                {% if config.blogs %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Niche</th>
+                                <th>Audience</th>
+                                <th>Tone</th>
+                                <th>Posts/Week</th>
+                                <th>Word Count</th>
+                                <th>Publisher</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for blog in config.blogs %}
+                            <tr>
+                                <td><code>{{ blog.id }}</code></td>
+                                <td>{{ blog.niche }}</td>
+                                <td>{{ blog.target_audience }}</td>
+                                <td>{{ blog.tone }}</td>
+                                <td><span class="badge bg-primary">{{ blog.posts_per_week }}</span></td>
+                                <td>{{ blog.word_count }}</td>
+                                <td><span class="badge bg-success">{{ blog.publish_to|title }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-blog fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No Blogs Configured</h5>
+                    <p class="text-muted">Add blog configurations to start generating articles</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Configuration Help</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-lightbulb me-2"></i>How to Modify Settings</h6>
+                    <p class="mb-2">To change these settings, edit the configuration file:</p>
+                    <code>config/settings.json</code>
+                    <hr>
+                    <p class="mb-2">For API keys and environment variables, edit:</p>
+                    <code>.env</code>
+                    <hr>
+                    <p class="mb-0">After making changes, restart the web server to apply them.</p>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Configuration Files</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-file-code me-2"></i><code>config/settings.json</code> - Main settings</li>
+                            <li><i class="fas fa-key me-2"></i><code>.env</code> - API keys</li>
+                            <li><i class="fas fa-copy me-2"></i><code>config/settings.example.json</code> - Template</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Documentation</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-book me-2"></i><a href="#" onclick="alert('See docs/CONFIGURATION.md')">Configuration Guide</a></li>
+                            <li><i class="fas fa-tools me-2"></i><a href="#" onclick="alert('See docs/SETUP.md')">Setup Guide</a></li>
+                            <li><i class="fas fa-question-circle me-2"></i><a href="#" onclick="alert('Check logs/autoblogger.log')">View Logs</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

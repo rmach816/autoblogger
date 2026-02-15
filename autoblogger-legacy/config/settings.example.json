@@ -1,0 +1,20 @@
+{
+  "ai_provider": "gemini",
+  "publisher": "file",
+  "environment": "development",
+  "log_level": "INFO",
+  "max_posts_per_day": 7,
+  "request_timeout": 30,
+  "blogs": [
+    {
+      "id": "blog_001",
+      "niche": "sustainable gardening",
+      "target_audience": "urban gardeners",
+      "tone": "friendly and informative",
+      "posts_per_week": 2,
+      "keywords": ["eco-friendly", "organic", "sustainable"],
+      "word_count": 1200,
+      "publish_to": "file"
+    }
+  ]
+}

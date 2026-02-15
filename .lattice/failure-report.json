@@ -1,0 +1,14 @@
+{
+  "cliVersion": "0.3.9",
+  "nodeVersion": "v22.21.0",
+  "platform": "win32",
+  "cwd": "F:\\Dropbox\\Cursor Projects\\autoBlogger",
+  "command": "verify",
+  "argv": [
+    "verify"
+  ],
+  "resolvedPaths": {
+    "cwd": "F:\\Dropbox\\Cursor Projects\\autoBlogger"
+  },
+  "errorMessage": "Verify failed: 1 check(s) failed or missing. Failed scripts: typecheck"
+}

@@ -1,0 +1,19 @@
+{
+  "generatorVersion": "0.3.9",
+  "policyVersion": "1.0.0",
+  "configHash": "3c3932b653db3f1ee4e82ac1c6e46faba8d5b8b575690f1a4ace25d854a7e415",
+  "files": [
+    {
+      "path": ".cursor/rules.md",
+      "sha256": "46f3e37d30099868211845ade8e36ee517f28cff0332cc1ac0a3a7bdd14dbfcb"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "sha256": "2ed9f666b9713a5ad489ad51b25c8a8b9e21f1a282ba3dfa0cb5222e314bafd9"
+    },
+    {
+      "path": "package.json",
+      "sha256": "c44ea10c2031ad935061e446c3f4037757f4171f80e0ed2015bb49d8b0554710"
+    }
+  ]
+}

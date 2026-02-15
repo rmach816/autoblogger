@@ -1,0 +1,288 @@
+name: CI Validation
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+jobs:
+  validate:
+    name: Code Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint check
+        run: npm run lint
+        continue-on-error: false
+
+      - name: Type check
+        run: npm run type-check || npm run tsc
+        continue-on-error: false
+
+      - name: Run unit tests
+        run: npm test -- --coverage --passWithNoTests
+        continue-on-error: false
+
+      - name: Check test coverage
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            LINES=$(cat coverage/coverage-summary.json | jq '.total.lines.pct')
+            BRANCHES=$(cat coverage/coverage-summary.json | jq '.total.branches.pct')
+            
+            echo "Coverage: Lines: $LINES%, Branches: $BRANCHES%"
+            
+            if (( $(echo "$LINES < 80" | bc -l) )); then
+              echo "❌ Line coverage below 80% threshold"
+              exit 1
+            fi
+            
+            if (( $(echo "$BRANCHES < 70" | bc -l) )); then
+              echo "❌ Branch coverage below 70% threshold"
+              exit 1
+            fi
+            
+            echo "✅ Coverage meets thresholds"
+          else
+            echo "⚠️  No coverage report found"
+          fi
+
+      - name: Check for @happy-path e2e tests
+        run: |
+          if grep -r "@happy-path" --include="*.spec.ts" --include="*.spec.tsx" --include="*.test.ts" --include="*.test.tsx" .; then
+            echo "✅ Found @happy-path tests"
+          else
+            echo "⚠️  No @happy-path tests found - required for critical flows"
+            # Don't fail build, just warn
+          fi
+
+      - name: Run e2e tests
+        run: npm run test:e2e || echo "⚠️  E2E tests not configured"
+        continue-on-error: true
+
+      - name: Secret scanning
+        run: |
+          echo "🔐 Scanning for secrets..."
+          
+          # Check for common secret patterns
+          if git diff origin/main...HEAD | grep -iE "(api_key|apikey|secret|password|token|private_key|client_secret|aws_access|stripe_key)" | grep -v ".env.example"; then
+            echo "❌ Possible secrets detected in diff"
+            exit 1
+          fi
+          
+          # Check for .env.local
+          if git diff origin/main...HEAD --name-only | grep ".env.local"; then
+            echo "❌ Attempted to commit .env.local"
+            exit 1
+          fi
+          
+          echo "✅ No secrets detected"
+
+      - name: Check for migration modifications
+        run: |
+          echo "🗄️  Checking migrations..."
+          
+          # Check if any existing migrations were modified
+          MODIFIED_MIGRATIONS=$(git diff origin/main...HEAD --name-status | grep "^M" | grep -i "migration" || true)
+          
+          if [ -n "$MODIFIED_MIGRATIONS" ]; then
+            echo "❌ Existing migrations were modified:"
+            echo "$MODIFIED_MIGRATIONS"
+            echo "Migrations must never be modified. Create new migrations instead."
+            exit 1
+          fi
+          
+          echo "✅ No migration modifications detected"
+
+      - name: Check for TypeScript any usage
+        run: |
+          echo "📘 Checking for 'any' usage..."
+          
+          # Find new any usage in TypeScript files
+          ANY_USAGE=$(git diff origin/main...HEAD | grep "^+" | grep -E ":\s*any([^a-zA-Z]|$)" | grep -v "@ts-any-ok" || true)
+          
+          if [ -n "$ANY_USAGE" ]; then
+            echo "⚠️  New 'any' usage detected:"
+            echo "$ANY_USAGE"
+            echo "Consider using 'unknown' with type guards or specific types"
+            # Don't fail, just warn
+          else
+            echo "✅ No new 'any' usage"
+          fi
+
+      - name: Dependency audit
+        run: |
+          echo "📦 Running dependency audit..."
+          npm audit --audit-level=high
+        continue-on-error: false
+
+      - name: Check bundle size
+        run: |
+          if [ -f "package.json" ] && grep -q "build" package.json; then
+            npm run build
+            
+            # Check if build output exists and report size
+            if [ -d "dist" ] || [ -d "build" ] || [ -d ".next" ]; then
+              du -sh dist build .next 2>/dev/null || echo "Build directory size check completed"
+            fi
+          fi
+        continue-on-error: true
+
+      - name: Verify documentation updated
+        run: |
+          echo "📄 Checking documentation..."
+          
+          # Check if CHANGELOG was updated
+          if git diff origin/main...HEAD --name-only | grep -E "(src/|lib/|app/)" > /dev/null; then
+            if ! git diff origin/main...HEAD --name-only | grep "CHANGELOG.md"; then
+              echo "⚠️  Code changed but CHANGELOG.md not updated"
+              # Don't fail, just warn
+            else
+              echo "✅ CHANGELOG.md updated"
+            fi
+          fi
+
+      - name: Check for console.log statements
+        run: |
+          echo "🖨️  Checking for console.log..."
+          
+          CONSOLE_LOGS=$(git diff origin/main...HEAD | grep "^+" | grep -E "console\.(log|debug|info)" | grep -v "@console-ok" || true)
+          
+          if [ -n "$CONSOLE_LOGS" ]; then
+            echo "⚠️  console.log statements found:"
+            echo "$CONSOLE_LOGS"
+            echo "Consider using proper logging library"
+            # Don't fail, just warn
+          else
+            echo "✅ No console.log statements in production code"
+          fi
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          files: ./coverage/coverage-final.json
+          flags: unittests
+          fail_ci_if_error: false
+        continue-on-error: true
+
+  performance-check:
+    name: Performance Validation
+    runs-on: ubuntu-latest
+    needs: validate
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build || echo "⚠️  Build script not configured"
+        continue-on-error: true
+
+      - name: Run performance tests
+        run: |
+          if [ -f "package.json" ] && grep -q "test:perf" package.json; then
+            npm run test:perf
+          else
+            echo "⚠️  Performance tests not configured (add 'test:perf' script)"
+          fi
+        continue-on-error: true
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: validate
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'HIGH,CRITICAL'
+        continue-on-error: true
+
+      - name: Upload Trivy results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+        continue-on-error: true
+
+  feature-flag-hygiene:
+    name: Feature Flag Hygiene Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for stale feature flags
+        run: |
+          echo "🚩 Checking for stale feature flags..."
+          
+          # This is a placeholder - implement based on your feature flag system
+          # Example: Check for flags older than 30 days
+          
+          if [ -f "feature-flags.json" ]; then
+            echo "Feature flags file found, checking for stale flags..."
+            # Add logic to parse and check flag ages
+          else
+            echo "⚠️  No feature-flags.json found - configure feature flag tracking"
+          fi
+
+  pr-validation:
+    name: PR Checklist Validation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Check PR has description
+        run: |
+          if [ -z "${{ github.event.pull_request.body }}" ]; then
+            echo "❌ PR description is empty"
+            echo "Please fill out the PR template with all required information"
+            exit 1
+          fi
+          echo "✅ PR has description"
+
+      - name: Validate PR title format
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          
+          # Check for conventional commit format
+          if echo "$PR_TITLE" | grep -qE "^(feat|fix|docs|style|refactor|perf|test|chore|revert|build|ci)(\(.+\))?:.+"; then
+            echo "✅ PR title follows conventional commit format"
+          else
+            echo "⚠️  PR title should follow format: type(scope): description"
+            echo "Examples: feat(api): add user endpoint, fix(auth): handle token expiry"
+          fi

@@ -1,0 +1,90 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.backup
+*.env.backup
+.env.*.backup
+
+# npm
+.npm-cache/
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Local backups
+.legacy_git_backup/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Logs
+logs/
+*.log
+
+# Output files
+output/
+
+# Temporary files
+*.tmp
+*.temp
+.test_write
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Databases
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Config
+config/settings.json
+!config/settings.example.json
+
+/autoblogger-legacy/.git/
+**/.git/
+/src/generated/prisma

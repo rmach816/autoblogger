@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Article {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  slug        String   @unique
+  status      String   @default("draft")
+  articleType String   @default("custom")
+  topic       String
+  keywords    String?
+  wordCount   Int      @default(0)
+  seoScore    Float    @default(0)
+  images      String?  // JSON array
+  metadata    String?  // JSON object
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  publishedAt DateTime?
+
+  // Relations
+  imagesList  Image[]
+
+  @@map("articles")
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  articleId String?
+  url       String
+  altText   String?
+  prompt    String?
+  style     String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  article   Article?  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@map("images")
+}
+

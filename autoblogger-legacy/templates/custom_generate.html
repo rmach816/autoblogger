@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+{% block title %}Custom Article Generator - AutoBlogger{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-magic me-2"></i>Custom Article Generator</h1>
+            <div>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Generation Form -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Article Configuration</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('custom_generate') }}" id="customGenerateForm">
+                    <!-- Basic Settings -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3"><i class="fas fa-cog me-2"></i>Basic Settings</h6>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label for="topic" class="form-label">Article Topic *</label>
+                            <input type="text" class="form-control" id="topic" name="topic" 
+                                   placeholder="e.g., Smart Home Security Systems for Houston Homes" required>
+                            <div class="form-text">What should the article be about? Be specific for better results.</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="tone" class="form-label">Writing Tone</label>
+                            <select class="form-select" id="tone" name="tone">
+                                <option value="professional">Professional</option>
+                                <option value="friendly">Friendly</option>
+                                <option value="authoritative">Authoritative</option>
+                                <option value="conversational">Conversational</option>
+                                <option value="technical">Technical</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="word_count" class="form-label">Word Count</label>
+                            <select class="form-select" id="word_count" name="word_count">
+                                <option value="800">800 words (Quick read)</option>
+                                <option value="1200" selected>1200 words (Standard)</option>
+                                <option value="1500">1500 words (Comprehensive)</option>
+                                <option value="2000">2000 words (In-depth)</option>
+                                <option value="2500">2500 words (Ultra-detailed)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="keywords" class="form-label">Keywords (comma-separated)</label>
+                            <input type="text" class="form-control" id="keywords" name="keywords" 
+                                   placeholder="smart home, automation, Houston, security">
+                            <div class="form-text">Include relevant SEO keywords for better search visibility.</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Formatting Options -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3"><i class="fas fa-paint-brush me-2"></i>Formatting Options</h6>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label">Content Structure</label>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="format_headings" name="formatting_options" value="headings">
+                                        <label class="form-check-label" for="format_headings">
+                                            Enhanced Headings
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="format_lists" name="formatting_options" value="lists">
+                                        <label class="form-check-label" for="format_lists">
+                                            Bullet Points
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="format_callouts" name="formatting_options" value="callouts">
+                                        <label class="form-check-label" for="format_callouts">
+                                            Callout Boxes
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="format_cta_buttons" name="formatting_options" value="cta_buttons">
+                                        <label class="form-check-label" for="format_cta_buttons">
+                                            CTA Buttons
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Image Options -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3"><i class="fas fa-image me-2"></i>Image Options</h6>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="include_images" name="include_images">
+                                <label class="form-check-label" for="include_images">
+                                    Include Image Suggestions
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="image_style" class="form-label">Image Style</label>
+                            <select class="form-select" id="image_style" name="image_style">
+                                <option value="professional">Professional</option>
+                                <option value="lifestyle">Lifestyle</option>
+                                <option value="technical">Technical</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Image Preview Section -->
+                    <div class="row mb-3" id="imagePreviewSection" style="display: none;">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3"><i class="fas fa-images me-2"></i>Suggested Images</h6>
+                            <div id="imageSuggestions" class="row">
+                                <!-- Image suggestions will be loaded here -->
+                            </div>
+                            <div class="text-center mt-3">
+                                <button type="button" class="btn btn-outline-primary btn-sm" id="refreshImagesBtn">
+                                    <i class="fas fa-sync me-1"></i>Refresh Images
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Call-to-Action Options -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3"><i class="fas fa-phone me-2"></i>Call-to-Action</h6>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="include_cta" name="include_cta" checked>
+                                <label class="form-check-label" for="include_cta">
+                                    Include Call-to-Action
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="cta_text" class="form-label">CTA Text</label>
+                            <input type="text" class="form-control" id="cta_text" name="cta_text" 
+                                   value="Schedule a Free Consultation Today">
+                        </div>
+                    </div>
+                    
+                    <!-- Business Context Display -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-info-circle me-2"></i>Business Context</h6>
+                                <p class="mb-1"><strong>Company:</strong> Executive Technology Group</p>
+                                <p class="mb-1"><strong>Phone:</strong> (281) 826-1880</p>
+                                <p class="mb-1"><strong>Service Areas:</strong> Houston & surrounding areas</p>
+                                <p class="mb-0"><strong>Specialties:</strong> Smart Home Automation, Home Theater & AV Systems, Networking Solutions, Security & Surveillance, Lighting Control</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Generate Button -->
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <button type="submit" class="btn btn-primary btn-lg" id="generateBtn">
+                                <i class="fas fa-magic me-2"></i>Generate Custom Article
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Section -->
+<div class="row mt-4" id="previewSection" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-eye me-2"></i>Article Preview</h5>
+            </div>
+            <div class="card-body">
+                <div id="previewContent">
+                    <!-- Preview content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Custom Articles -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h3><i class="fas fa-history me-2"></i>Recent Custom Articles</h3>
+        <p class="text-muted">Your recently generated custom articles will appear here.</p>
+    </div>
+</div>
+
+<script>
+document.getElementById('customGenerateForm').addEventListener('submit', function(e) {
+    const generateBtn = document.getElementById('generateBtn');
+    generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating Article...';
+    generateBtn.disabled = true;
+});
+
+// Real-time preview functionality
+document.getElementById('topic').addEventListener('input', function() {
+    updatePreview();
+});
+
+document.getElementById('tone').addEventListener('change', function() {
+    updatePreview();
+});
+
+document.getElementById('word_count').addEventListener('change', function() {
+    updatePreview();
+});
+
+document.getElementById('image_style').addEventListener('change', function() {
+    updatePreview();
+    if (document.getElementById('include_images').checked) {
+        loadImageSuggestions();
+    }
+});
+
+document.getElementById('include_images').addEventListener('change', function() {
+    if (this.checked) {
+        loadImageSuggestions();
+        document.getElementById('imagePreviewSection').style.display = 'block';
+    } else {
+        document.getElementById('imagePreviewSection').style.display = 'none';
+    }
+});
+
+document.getElementById('refreshImagesBtn').addEventListener('click', function() {
+    loadImageSuggestions();
+});
+
+async function loadImageSuggestions() {
+    const topic = document.getElementById('topic').value;
+    const style = document.getElementById('image_style').value;
+    
+    if (!topic) {
+        return;
+    }
+    
+    const imageSuggestions = document.getElementById('imageSuggestions');
+    imageSuggestions.innerHTML = '<div class="col-12 text-center"><i class="fas fa-spinner fa-spin"></i> Loading images...</div>';
+    
+    try {
+        const response = await fetch('/api/image-suggestions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                topic: topic,
+                style: style,
+                count: 3
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            displayImageSuggestions(data.suggestions);
+        } else {
+            imageSuggestions.innerHTML = '<div class="col-12 text-center text-muted">No images found</div>';
+        }
+    } catch (error) {
+        console.error('Error loading images:', error);
+        imageSuggestions.innerHTML = '<div class="col-12 text-center text-danger">Error loading images</div>';
+    }
+}
+
+function displayImageSuggestions(suggestions) {
+    const imageSuggestions = document.getElementById('imageSuggestions');
+    
+    if (suggestions.length === 0) {
+        imageSuggestions.innerHTML = '<div class="col-12 text-center text-muted">No images found</div>';
+        return;
+    }
+    
+    let html = '';
+    suggestions.forEach(suggestion => {
+        html += `
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <img src="${suggestion.thumbnail_url}" class="card-img-top" alt="${suggestion.title}" style="height: 150px; object-fit: cover;">
+                    <div class="card-body p-2">
+                        <h6 class="card-title small">${suggestion.title}</h6>
+                        <p class="card-text small text-muted">${suggestion.description}</p>
+                        <small class="text-muted">Photo by ${suggestion.photographer}</small>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    imageSuggestions.innerHTML = html;
+}
+
+function updatePreview() {
+    const topic = document.getElementById('topic').value;
+    const tone = document.getElementById('tone').value;
+    const wordCount = document.getElementById('word_count').value;
+    
+    if (topic) {
+        const previewSection = document.getElementById('previewSection');
+        const previewContent = document.getElementById('previewContent');
+        
+        previewContent.innerHTML = `
+            <div class="alert alert-light">
+                <h6>Preview Configuration:</h6>
+                <p><strong>Topic:</strong> ${topic}</p>
+                <p><strong>Tone:</strong> ${tone}</p>
+                <p><strong>Word Count:</strong> ${wordCount} words</p>
+                <p class="text-muted">This is a preview of your article configuration. The actual content will be generated when you submit the form.</p>
+            </div>
+        `;
+        previewSection.style.display = 'block';
+    }
+}
+</script>
+{% endblock %}

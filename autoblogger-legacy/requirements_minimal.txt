@@ -1,0 +1,21 @@
+# Minimal requirements for AutoBlogger
+# Only essential packages that don't require compilation
+
+# Web Framework
+flask>=3.1.0
+werkzeug>=3.1.0
+jinja2>=3.1.0
+
+# AI and HTTP (avoiding grpcio issues)
+google-generativeai>=0.8.0
+httpx>=0.27.0
+
+# Data handling
+pydantic>=2.10.0
+python-dotenv>=1.0.0
+
+# Testing
+pytest>=8.3.0
+
+# Code quality
+black>=24.10.0

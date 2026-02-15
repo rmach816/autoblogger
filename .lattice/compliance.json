@@ -1,0 +1,41 @@
+{
+  "runs": [
+    {
+      "timestamp": "2026-01-04T04:03:01.900Z",
+      "passed": false,
+      "checksRun": [
+        "lint",
+        "typecheck",
+        "test",
+        "build"
+      ],
+      "missingScripts": [],
+      "failedScripts": [
+        "typecheck"
+      ],
+      "preset": "pro"
+    },
+    {
+      "timestamp": "2026-01-04T04:07:52.927Z",
+      "passed": false,
+      "checksRun": [
+        "lint",
+        "typecheck",
+        "test",
+        "build"
+      ],
+      "missingScripts": [],
+      "failedScripts": [
+        "typecheck"
+      ],
+      "preset": "pro"
+    }
+  ],
+  "stats": {
+    "totalRuns": 2,
+    "passed": 0,
+    "failed": 2,
+    "streak": 0,
+    "lastRun": "2026-01-04T04:07:52.927Z"
+  }
+}

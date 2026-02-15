@@ -1,0 +1,29 @@
+# Simplified requirements for AutoBlogger
+# Core dependencies only - avoiding compilation issues
+
+# Web Framework
+flask>=3.1.0
+werkzeug>=3.1.0
+jinja2>=3.1.0
+
+# AI and HTTP
+google-generativeai>=0.8.0
+httpx>=0.27.0
+
+# Data handling
+pydantic>=2.10.0
+python-dotenv>=1.0.0
+
+# Testing
+pytest>=8.3.0
+pytest-asyncio>=0.24.0
+
+# Code quality
+black>=24.10.0
+mypy>=1.13.0
+
+# Image handling (optional)
+pillow>=10.4.0
+
+# Scheduling (optional)
+schedule>=1.2.0

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{ filename }} - AutoBlogger{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-eye me-2"></i>Article Preview</h1>
+            <div>
+                <a href="{{ url_for('articles') }}" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Articles
+                </a>
+                <a href="/output/{{ filename }}" class="btn btn-primary" download>
+                    <i class="fas fa-download me-1"></i>Download
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="article-content">
+                    {{ content|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add some custom styling for the article preview
+    document.addEventListener('DOMContentLoaded', function() {
+        const articleContent = document.querySelector('.article-content');
+        if (articleContent) {
+            // Add some padding and styling
+            articleContent.style.padding = '20px';
+            articleContent.style.backgroundColor = '#f8f9fa';
+            articleContent.style.borderRadius = '8px';
+        }
+    });
+</script>
+{% endblock %}

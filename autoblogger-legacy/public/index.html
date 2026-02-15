@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoBlogger - AI-Powered Blog Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .logo-text p {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .status-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Navigation */
+        .nav {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin: 2rem 0;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .nav-tab {
+            padding: 1rem 1.5rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 500;
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .nav-tab:hover {
+            color: #374151;
+            background: #f9fafb;
+        }
+        
+        .nav-tab.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+        
+        /* Content */
+        .content {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .content h2 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        
+        .content p {
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+        
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .form-radio-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .form-radio {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .form-radio:hover {
+            background: #f9fafb;
+        }
+        
+        .form-radio input[type="radio"] {
+            margin-right: 0.75rem;
+        }
+        
+        .form-radio-content h4 {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .form-radio-content p {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+        
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        
+        .btn-success {
+            background: #059669;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #047857;
+        }
+        
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 2px solid #e5e7eb;
+            border-top: 2px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Alerts */
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        .alert.show {
+            display: block;
+        }
+        
+        .alert-success {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+        
+        .alert-error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+        
+        /* Articles */
+        .article-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: box-shadow 0.2s;
+        }
+        
+        .article-card:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .article-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        .article-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        
+        .article-badge {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+        }
+        
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #1f2937;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+        
+        .footer p {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer .muted {
+            color: #9ca3af;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-radio-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">⚡</div>
+                    <div class="logo-text">
+                        <h1>AutoBlogger</h1>
+                        <p>AI-Powered Blog Generator</p>
+                    </div>
+                </div>
+                <div class="status">
+                    <span>Version 2.0.0</span>
+                    <div class="status-dot"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('generate')">📝 Generate Article</button>
+                <button class="nav-tab" onclick="showTab('articles')">📚 My Articles</button>
+                <button class="nav-tab" onclick="showTab('images')">🖼️ Generate Images</button>
+                <button class="nav-tab" onclick="showTab('settings')">⚙️ Settings</button>
+            </div>
+        </nav>
+
+        <!-- Generate Article Tab -->
+        <div id="content-generate" class="content">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2>Generate Your Next Blog Article</h2>
+                <p>Create engaging, SEO-optimized content in minutes with our AI-powered blog generator. Perfect for businesses, marketers, and content creators.</p>
+            </div>
+
+            <form id="article-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="topic">Article Topic *</label>
+                        <input type="text" id="topic" name="topic" required class="form-input" 
+                               placeholder="e.g., The Future of AI in Healthcare">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="wordCount">Word Count</label>
+                        <select id="wordCount" name="wordCount" class="form-input">
+                            <option value="500">500 words (Quick read)</option>
+                            <option value="800" selected>800 words (Standard)</option>
+                            <option value="1200">1200 words (Comprehensive)</option>
+                            <option value="1500">1500 words (In-depth)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="keywords">Keywords (comma-separated)</label>
+                    <input type="text" id="keywords" name="keywords" class="form-input" 
+                           placeholder="e.g., AI, healthcare, innovation, technology">
+                    <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;">Include relevant keywords to improve SEO</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Article Type</label>
+                    <div class="form-radio-group">
+                        <label class="form-radio">
+                            <input type="radio" name="articleType" value="custom" checked>
+                            <div class="form-radio-content">
+                                <h4>Custom Article</h4>
+                                <p>Tailored to your specific topic</p>
+                            </div>
+                        </label>
+                        <label class="form-radio">
+                            <input type="radio" name="articleType" value="quick">
+                            <div class="form-radio-content">
+                                <h4>Quick Action</h4>
+                                <p>Fast, actionable content</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="text-align: center;">
+                    <button type="submit" id="generate-btn" class="btn btn-primary">
+                        ⚡ Generate Article
+                    </button>
+                </div>
+            </form>
+
+            <!-- Loading State -->
+            <div id="loading-state" class="loading">
+                <div class="spinner"></div>
+                <p>Generating your article...</p>
+            </div>
+
+            <!-- Success State -->
+            <div id="success-state" class="alert alert-success">
+                <strong>✅ Article Generated Successfully!</strong><br>
+                Your article has been created and saved. View it in the "My Articles" tab.
+            </div>
+
+            <!-- Error State -->
+            <div id="error-state" class="alert alert-error">
+                <strong>❌ Generation Failed</strong><br>
+                <span id="error-message">Please try again or contact support.</span>
+            </div>
+        </div>
+
+        <!-- Articles Tab -->
+        <div id="content-articles" class="content hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2>My Articles</h2>
+                <button onclick="loadArticles()" class="btn btn-secondary">🔄 Refresh</button>
+            </div>
+            
+            <div id="articles-loading" class="loading">
+                <div class="spinner"></div>
+                <p>Loading articles...</p>
+            </div>
+
+            <div id="articles-list">
+                <!-- Articles will be loaded here -->
+            </div>
+
+            <div id="no-articles" class="hidden" style="text-align: center; padding: 3rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">📄</div>
+                <h3 style="color: #6b7280; margin-bottom: 0.5rem;">No articles yet</h3>
+                <p style="color: #9ca3af;">Generate your first article to get started!</p>
+            </div>
+        </div>
+
+        <!-- Images Tab -->
+        <div id="content-images" class="content hidden">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2>Generate Images</h2>
+                <p>Create professional images for your articles with our AI-powered image generator.</p>
+            </div>
+
+            <form id="image-form">
+                <div class="form-group">
+                    <label class="form-label" for="imagePrompt">Image Description *</label>
+                    <textarea id="imagePrompt" name="imagePrompt" rows="3" required class="form-input" 
+                              placeholder="e.g., Professional business team meeting in modern office"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="imageStyle">Image Style</label>
+                    <select id="imageStyle" name="imageStyle" class="form-input">
+                        <option value="professional">Professional</option>
+                        <option value="business">Business</option>
+                        <option value="technology">Technology</option>
+                        <option value="security">Security</option>
+                        <option value="networking">Networking</option>
+                    </select>
+                </div>
+
+                <div style="text-align: center;">
+                    <button type="submit" id="generate-image-btn" class="btn btn-success">
+                        🖼️ Generate Image
+                    </button>
+                </div>
+            </form>
+
+            <!-- Image Result -->
+            <div id="image-result" class="hidden" style="margin-top: 2rem;">
+                <div style="background: #f9fafb; border-radius: 0.5rem; padding: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem;">Generated Image</h3>
+                    <div id="generated-image-container" style="text-align: center;">
+                        <!-- Generated image will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="content-settings" class="content hidden">
+            <h2>Settings</h2>
+            <div style="border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.5rem; margin-top: 1.5rem;">
+                <h3 style="margin-bottom: 1rem;">API Configuration</h3>
+                <div class="form-group">
+                    <label class="form-label">Backend Status</label>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div id="backend-status" style="width: 0.75rem; height: 0.75rem; background: #9ca3af; border-radius: 50%;"></div>
+                        <span id="backend-status-text">Checking...</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">API Base URL</label>
+                    <input type="text" value="http://localhost:5001/api" readonly class="form-input" style="background: #f9fafb; color: #6b7280;">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 AutoBlogger. All rights reserved.</p>
+        <p class="muted">Built with ❤️ by Executive Technology Group</p>
+    </footer>
+
+    <script>
+        // Tab Management
+        function showTab(tabName) {
+            // Hide all content
+            document.querySelectorAll('.content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected content
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+            
+            // Add active class to selected tab
+            event.target.classList.add('active');
+            
+            // Load content if needed
+            if (tabName === 'articles') {
+                loadArticles();
+            } else if (tabName === 'settings') {
+                checkBackendStatus();
+            }
+        }
+
+        // Article Generation
+        document.getElementById('article-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                topic: formData.get('topic'),
+                keywords: formData.get('keywords').split(',').map(k => k.trim()).filter(k => k),
+                wordCount: parseInt(formData.get('wordCount')),
+                articleType: formData.get('articleType')
+            };
+            
+            // Show loading state
+            document.getElementById('generate-btn').disabled = true;
+            document.getElementById('generate-btn').textContent = '⏳ Generating...';
+            document.getElementById('loading-state').classList.add('show');
+            document.getElementById('success-state').classList.remove('show');
+            document.getElementById('error-state').classList.remove('show');
+            
+            try {
+                const response = await fetch('http://localhost:5001/api/generate-article', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('success-state').classList.add('show');
+                    document.getElementById('loading-state').classList.remove('show');
+                    // Reset form
+                    this.reset();
+                } else {
+                    throw new Error(result.error || 'Failed to generate article');
+                }
+            } catch (error) {
+                document.getElementById('error-message').textContent = error.message;
+                document.getElementById('error-state').classList.add('show');
+                document.getElementById('loading-state').classList.remove('show');
+            } finally {
+                document.getElementById('generate-btn').disabled = false;
+                document.getElementById('generate-btn').textContent = '⚡ Generate Article';
+            }
+        });
+
+        // Image Generation
+        document.getElementById('image-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                prompt: formData.get('imagePrompt'),
+                style: formData.get('imageStyle')
+            };
+            
+            // Show loading state
+            document.getElementById('generate-image-btn').disabled = true;
+            document.getElementById('generate-image-btn').textContent = '⏳ Generating...';
+            
+            try {
+                const response = await fetch('http://localhost:5001/api/generate-image', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Show generated image
+                    const container = document.getElementById('generated-image-container');
+                    container.innerHTML = `
+                        <img src="${result.imageUrl}" alt="${result.prompt}" style="max-width: 100%; height: auto; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                        <p style="margin-top: 1rem; color: #6b7280;">${result.prompt}</p>
+                        <a href="${result.imageUrl}" target="_blank" style="display: inline-block; margin-top: 0.5rem; color: #2563eb; text-decoration: none;">View Full Size</a>
+                    `;
+                    document.getElementById('image-result').classList.remove('hidden');
+                } else {
+                    throw new Error(result.error || 'Failed to generate image');
+                }
+            } catch (error) {
+                alert('Error generating image: ' + error.message);
+            } finally {
+                document.getElementById('generate-image-btn').disabled = false;
+                document.getElementById('generate-image-btn').textContent = '🖼️ Generate Image';
+            }
+        });
+
+        // Load Articles
+        async function loadArticles() {
+            const articlesList = document.getElementById('articles-list');
+            const noArticles = document.getElementById('no-articles');
+            const loading = document.getElementById('articles-loading');
+            
+            loading.classList.add('show');
+            articlesList.innerHTML = '';
+            noArticles.classList.add('hidden');
+            
+            try {
+                const response = await fetch('http://localhost:5001/api/articles');
+                const data = await response.json();
+                const articles = data.articles || data;
+                
+                if (articles.length === 0) {
+                    noArticles.classList.remove('hidden');
+                } else {
+                    articles.forEach(article => {
+                        const articleDiv = document.createElement('div');
+                        articleDiv.className = 'article-card';
+                        articleDiv.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div style="flex: 1;">
+                                    <h3 class="article-title">${article.title}</h3>
+                                    <div class="article-meta">
+                                        <span class="article-badge">${article.articleType}</span>
+                                        <span>${article.wordCount} words</span>
+                                        <span>${new Date(article.createdAt).toLocaleDateString()}</span>
+                                    </div>
+                                    <p style="color: #6b7280; font-size: 0.875rem;">${article.topic || 'No topic specified'}</p>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <button onclick="viewArticle('${article.id}')" style="background: #2563eb; color: white; border: none; padding: 0.5rem; border-radius: 0.25rem; cursor: pointer;">
+                                        👁️ View
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        articlesList.appendChild(articleDiv);
+                    });
+                }
+            } catch (error) {
+                articlesList.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: #dc2626;">
+                        <div style="font-size: 2rem; margin-bottom: 1rem;">⚠️</div>
+                        <p>Failed to load articles: ${error.message}</p>
+                    </div>
+                `;
+            } finally {
+                loading.classList.remove('show');
+            }
+        }
+
+        // Check Backend Status
+        async function viewArticle(articleId) {
+            try {
+                const response = await fetch(`http://localhost:5001/api/articles/${articleId}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const article = data.article;
+                    
+                    // Create modal to display article
+                    const modal = document.createElement('div');
+                    modal.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0,0,0,0.8);
+                        z-index: 1000;
+                        overflow-y: auto;
+                        padding: 20px;
+                        box-sizing: border-box;
+                    `;
+                    
+                    modal.innerHTML = `
+                        <div style="
+                            background: white;
+                            max-width: 800px;
+                            margin: 0 auto;
+                            padding: 30px;
+                            border-radius: 10px;
+                            position: relative;
+                        ">
+                            <button onclick="this.parentElement.parentElement.remove()" style="
+                                position: absolute;
+                                top: 15px;
+                                right: 15px;
+                                background: #ef4444;
+                                color: white;
+                                border: none;
+                                border-radius: 5px;
+                                padding: 8px 12px;
+                                cursor: pointer;
+                                font-size: 18px;
+                            ">✕</button>
+                            
+                            <h1 style="color: #007bff; margin-bottom: 20px;">${article.title}</h1>
+                            
+                            <div style="
+                                background: #f8f9fa;
+                                padding: 15px;
+                                border-radius: 8px;
+                                margin-bottom: 25px;
+                                border-left: 4px solid #007bff;
+                            ">
+                                <p><strong>Topic:</strong> ${article.topic}</p>
+                                <p><strong>Type:</strong> ${article.articleType}</p>
+                                <p><strong>Word Count:</strong> ${article.wordCount}</p>
+                                <p><strong>Keywords:</strong> ${article.keywords}</p>
+                                <p><strong>Created:</strong> ${new Date(article.createdAt).toLocaleString()}</p>
+                            </div>
+                            
+                            <div style="
+                                line-height: 1.8;
+                                font-size: 16px;
+                                color: #333;
+                            ">${article.content.replace(/\n/g, '<br>')}</div>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(modal);
+                } else {
+                    alert('Failed to load article: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error viewing article:', error);
+                alert('Failed to load article');
+            }
+        }
+
+        async function checkBackendStatus() {
+            const status = document.getElementById('backend-status');
+            const statusText = document.getElementById('backend-status-text');
+            
+            try {
+                const response = await fetch('http://localhost:5001/health');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    status.style.background = '#10b981';
+                    statusText.textContent = 'Connected - ' + data.service + ' v' + data.version;
+                } else {
+                    throw new Error('Backend not responding');
+                }
+            } catch (error) {
+                status.style.background = '#ef4444';
+                statusText.textContent = 'Disconnected - ' + error.message;
+            }
+        }
+
+        // View Article (placeholder)
+        function viewArticle(articleId) {
+            alert('Article viewer coming soon! Article ID: ' + articleId);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkBackendStatus();
+        });
+    </script>
+</body>
+</html>

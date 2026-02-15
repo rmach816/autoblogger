@@ -1,0 +1,9 @@
+{
+  "projectType": "nextjs",
+  "packageManager": "npm",
+  "strictnessPreset": "pro",
+  "testingLevel": "none",
+  "billingProvider": "none",
+  "analyticsProvider": "none",
+  "observability": "none"
+}

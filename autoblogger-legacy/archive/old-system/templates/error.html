@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Error - AutoBlogger{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="text-center py-5">
+            <i class="fas fa-exclamation-triangle fa-4x text-danger mb-4"></i>
+            <h1 class="text-danger">Oops! Something went wrong</h1>
+            <p class="lead text-muted">{{ message or "An unexpected error occurred" }}</p>
+            
+            <div class="mt-4">
+                <a href="{{ url_for('index') }}" class="btn btn-primary me-3">
+                    <i class="fas fa-home me-2"></i>Go to Dashboard
+                </a>
+                <button onclick="history.back()" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Go Back
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-tools me-2"></i>Troubleshooting</h5>
+            </div>
+            <div class="card-body">
+                <h6>Common Solutions:</h6>
+                <ul>
+                    <li>Check that all required API keys are set in your <code>.env</code> file</li>
+                    <li>Verify your configuration file <code>config/settings.json</code> is valid</li>
+                    <li>Make sure the output directory is writable</li>
+                    <li>Check the logs in <code>logs/autoblogger.log</code> for more details</li>
+                </ul>
+                
+                <h6 class="mt-3">Need Help?</h6>
+                <p class="mb-0">Check the documentation in the <code>docs/</code> folder or review the setup guide.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

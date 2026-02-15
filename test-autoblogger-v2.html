@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoBlogger v2.0 - Test Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .articles {
+            margin-top: 40px;
+        }
+        
+        .article-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s ease;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .article-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .article-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .article-content {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .view-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .view-btn:hover {
+            background: #218838;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 AutoBlogger v2.0</h1>
+            <p>AI-Powered Blog Generator - Production Ready</p>
+        </div>
+        
+        <div class="content">
+            <h2>Generate New Article</h2>
+            <form id="articleForm">
+                <div class="form-group">
+                    <label for="topic">Article Topic *</label>
+                    <input type="text" id="topic" name="topic" placeholder="e.g., The Future of AI in Healthcare" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="keywords">Keywords (comma-separated)</label>
+                    <input type="text" id="keywords" name="keywords" placeholder="e.g., AI, healthcare, innovation, technology">
+                </div>
+                
+                <div class="form-group">
+                    <label for="wordCount">Word Count</label>
+                    <select id="wordCount" name="wordCount">
+                        <option value="500">500 words (Quick read)</option>
+                        <option value="800" selected>800 words (Standard)</option>
+                        <option value="1200">1200 words (Comprehensive)</option>
+                        <option value="1500">1500 words (In-depth)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="articleType">Article Type</label>
+                    <select id="articleType" name="articleType">
+                        <option value="custom">Custom Article</option>
+                        <option value="quick">Quick Action</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn" id="generateBtn">
+                    ⚡ Generate Article
+                </button>
+            </form>
+            
+            <div id="status"></div>
+            
+            <div class="articles">
+                <h2>Generated Articles</h2>
+                <div id="articlesList">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading articles...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5001/api';
+        
+        // Generate article
+        document.getElementById('articleForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const generateBtn = document.getElementById('generateBtn');
+            const statusDiv = document.getElementById('status');
+            
+            generateBtn.disabled = true;
+            generateBtn.textContent = '⏳ Generating...';
+            statusDiv.innerHTML = '';
+            
+            try {
+                const formData = new FormData(e.target);
+                const data = {
+                    topic: formData.get('topic'),
+                    keywords: formData.get('keywords').split(',').map(k => k.trim()).filter(k => k),
+                    wordCount: parseInt(formData.get('wordCount')),
+                    articleType: formData.get('articleType')
+                };
+                
+                const response = await fetch(`${API_BASE}/generate-article`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ Article "${result.article.title}" generated successfully!
+                        </div>
+                    `;
+                    e.target.reset();
+                    loadArticles();
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ Error: ${result.error || 'Failed to generate article'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ Error: Failed to connect to server
+                    </div>
+                `;
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = '⚡ Generate Article';
+            }
+        });
+        
+        // Load articles
+        async function loadArticles() {
+            const articlesList = document.getElementById('articlesList');
+            
+            try {
+                const response = await fetch(`${API_BASE}/articles`);
+                const result = await response.json();
+                
+                if (result.success && result.articles.length > 0) {
+                    articlesList.innerHTML = result.articles.map(article => `
+                        <div class="article-card">
+                            <div class="article-title">${article.title}</div>
+                            <div class="article-meta">
+                                Topic: ${article.topic} | 
+                                Type: ${article.articleType} | 
+                                Words: ${article.wordCount} | 
+                                Created: ${new Date(article.createdAt).toLocaleDateString()}
+                            </div>
+                            <div class="article-content">
+                                ${article.content ? article.content.substring(0, 200) + '...' : 'Content not available'}
+                            </div>
+                            <button class="view-btn" onclick="viewArticle('${article.id}')">
+                                👁️ View Full Article
+                            </button>
+                        </div>
+                    `).join('');
+                } else {
+                    articlesList.innerHTML = `
+                        <div class="loading">
+                            <p>No articles generated yet. Create your first article above!</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                articlesList.innerHTML = `
+                    <div class="status error">
+                        ❌ Error loading articles: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // View article
+        async function viewArticle(articleId) {
+            try {
+                const response = await fetch(`${API_BASE}/articles/${articleId}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const article = result.article;
+                    const modal = document.createElement('div');
+                    modal.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0,0,0,0.8);
+                        z-index: 1000;
+                        overflow-y: auto;
+                        padding: 20px;
+                        box-sizing: border-box;
+                    `;
+                    
+                    modal.innerHTML = `
+                        <div style="
+                            background: white;
+                            max-width: 800px;
+                            margin: 0 auto;
+                            padding: 30px;
+                            border-radius: 10px;
+                            position: relative;
+                        ">
+                            <button onclick="this.parentElement.parentElement.remove()" style="
+                                position: absolute;
+                                top: 15px;
+                                right: 15px;
+                                background: #dc3545;
+                                color: white;
+                                border: none;
+                                border-radius: 5px;
+                                padding: 8px 12px;
+                                cursor: pointer;
+                                font-size: 18px;
+                            ">✕</button>
+                            
+                            <h1 style="color: #667eea; margin-bottom: 20px;">${article.title}</h1>
+                            
+                            <div style="
+                                background: #f8f9fa;
+                                padding: 15px;
+                                border-radius: 8px;
+                                margin-bottom: 25px;
+                                border-left: 4px solid #667eea;
+                            ">
+                                <p><strong>Topic:</strong> ${article.topic}</p>
+                                <p><strong>Type:</strong> ${article.articleType}</p>
+                                <p><strong>Word Count:</strong> ${article.wordCount}</p>
+                                <p><strong>Keywords:</strong> ${article.keywords || 'None'}</p>
+                                <p><strong>Created:</strong> ${new Date(article.createdAt).toLocaleString()}</p>
+                            </div>
+                            
+                            <div style="
+                                line-height: 1.8;
+                                font-size: 16px;
+                                color: #333;
+                            ">${article.content.replace(/\n/g, '<br>')}</div>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(modal);
+                } else {
+                    alert('Failed to load article: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Failed to load article: ' + error.message);
+            }
+        }
+        
+        // Load articles on page load
+        loadArticles();
+    </script>
+</body>
+</html>
+

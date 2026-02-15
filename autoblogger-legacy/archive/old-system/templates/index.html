@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - AutoBlogger{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card bg-gradient-primary text-white">
+            <div class="card-body text-center py-5">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-robot me-3"></i>Welcome to AutoBlogger
+                </h1>
+                <p class="lead mb-4">AI-Powered Content Generation for Your Business</p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <span class="badge bg-light text-dark fs-6 px-3 py-2">
+                        <i class="fas fa-blog me-2"></i>{{ blogs|length }} Blog{{ 's' if blogs|length != 1 else '' }}
+                    </span>
+                    <span class="badge bg-light text-dark fs-6 px-3 py-2">
+                        <i class="fas fa-file-alt me-2"></i>{{ recent_articles|length }} Article{{ 's' if recent_articles|length != 1 else '' }}
+                    </span>
+                    <span class="badge bg-light text-dark fs-6 px-3 py-2">
+                        <i class="fas fa-magic me-2"></i>AI Powered
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Generate New Article</h6>
+                        <form method="POST" action="{{ url_for('generate_article') }}" onsubmit="showLoading(this.querySelector('button'))">
+                            <div class="mb-3">
+                                <select name="blog_id" class="form-select" required>
+                                    <option value="">Select a blog...</option>
+                                    {% for blog in blogs %}
+                                    <option value="{{ blog.id }}">{{ blog.niche }} ({{ blog.target_audience }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-magic me-2"></i>Generate Article
+                            </button>
+                        </form>
+                        <div class="mt-2">
+                            <a href="{{ url_for('custom_generate') }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-cog me-1"></i>Custom Generator
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Recent Activity</h6>
+                        {% if recent_articles %}
+                            <p class="text-muted">Last article: <strong>{{ recent_articles[0].title }}</strong></p>
+                            <p class="text-muted">Generated {{ recent_articles[0].created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                        {% else %}
+                            <p class="text-muted">No articles generated yet</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Blog Overview -->
+<div class="row mb-4">
+    <div class="col-12">
+        <h3><i class="fas fa-blog me-2"></i>Your Blogs</h3>
+    </div>
+</div>
+
+<div class="row">
+    {% for blog in blogs %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">{{ blog.niche }}</h6>
+                <span class="badge bg-secondary">{{ blog.posts_per_week }}/week</span>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small mb-2">
+                    <i class="fas fa-users me-1"></i>{{ blog.target_audience }}
+                </p>
+                <p class="text-muted small mb-2">
+                    <i class="fas fa-palette me-1"></i>{{ blog.tone }}
+                </p>
+                <p class="text-muted small mb-2">
+                    <i class="fas fa-key me-1"></i>{{ blog.keywords|join(', ') }}
+                </p>
+                <p class="text-muted small mb-3">
+                    <i class="fas fa-file-word me-1"></i>{{ blog.word_count }} words
+                </p>
+                
+                <form method="POST" action="{{ url_for('generate_article') }}" onsubmit="showLoading(this.querySelector('button'))">
+                    <input type="hidden" name="blog_id" value="{{ blog.id }}">
+                    <button type="submit" class="btn btn-primary btn-sm w-100">
+                        <i class="fas fa-magic me-1"></i>Generate Article
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Recent Articles -->
+{% if recent_articles %}
+<div class="row mt-5">
+    <div class="col-12">
+        <h3><i class="fas fa-clock me-2"></i>Recent Articles</h3>
+    </div>
+</div>
+
+<div class="row">
+    {% for article in recent_articles[:6] %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="card-title">{{ article.title }}</h6>
+                <p class="text-muted small mb-2">
+                    <i class="fas fa-calendar me-1"></i>{{ article.created_at.strftime('%B %d, %Y') }}
+                </p>
+                <p class="text-muted small mb-3">
+                    <i class="fas fa-file-alt me-1"></i>{{ article.filename }}
+                </p>
+                <a href="{{ article.url }}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-eye me-1"></i>View Article
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row mt-3">
+    <div class="col-12 text-center">
+        <a href="{{ url_for('articles') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-list me-2"></i>View All Articles
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<!-- System Status -->
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>System Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="fas fa-robot fa-2x text-primary mb-2"></i>
+                            <h6>AI Provider</h6>
+                            <span class="badge bg-{{ 'success' if config.ai_provider == 'gemini' else 'warning' }}">
+                                {{ config.ai_provider|title }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="fas fa-upload fa-2x text-success mb-2"></i>
+                            <h6>Publisher</h6>
+                            <span class="badge bg-success">{{ config.publisher|title }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="fas fa-cog fa-2x text-info mb-2"></i>
+                            <h6>Environment</h6>
+                            <span class="badge bg-info">{{ config.environment|title }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="fas fa-chart-line fa-2x text-warning mb-2"></i>
+                            <h6>Daily Limit</h6>
+                            <span class="badge bg-warning">{{ config.max_posts_per_day }} posts</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
